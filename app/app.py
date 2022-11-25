@@ -21,15 +21,29 @@ controller = Controller()
 def main():
     return redirect(url_for("index"))
 
-@app.route('/index')
+@app.route("/charge", methods=["GET", "POST"])
+def charge():
+    token = request.json["token"]
+    user = controller.app.select_from("users", [["id", session["id"]]])[0]
+            
+    # Returns True (1) or False (2)
+    res = controller.predict(expected=user.get("name").upper(), data_url=token)
+    
+    if res:
+        res = controller.insertIntoPresence(session["id"])
+        
+    return jsonify({"val_as_expected": res})
+
+@app.route('/index', methods=["GET", "POST"])
 def index():
     print("You are now in /index")
     if "loggedin" in session:
-        if session['status'] == 0 or session['status'] == 1:
-            return render_template('index.html', id=session['id'])
-        else:
-            return redirect(f"{url_for('after')}?s=2")
-    
+        if "predict" not in request.args:
+            if session['status'] == 0 or session['status'] == 1:
+                return render_template('index.html', id=session['id'])
+            else:
+                return redirect(f"{url_for('after')}?s=2")
+
     return redirect(url_for('login'))
 
 @app.route('/video_feed')
@@ -106,6 +120,7 @@ def after():
         session.pop('id', None)
         session.pop('username', None)
         session.pop('status', None)
+    
     
     return render_template("after.html")
 

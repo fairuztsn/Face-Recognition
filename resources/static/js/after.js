@@ -16,21 +16,16 @@ function get(param) {
     return $_GET[param];
 }
 
-function bringMeBack() {
-    let currentURL = window.location.href;
-    location.replace(currentURL.replace("after?s=0", "index"));
-}
 
-function main() {
+$( document ).ready(function() {
+    console.log("READY!");
     let message = "";
 
     const status = get("s");
 
-    const text = document.querySelector("#text");
-    const button = document.querySelector("#btn-try-again");
-    const img = document.querySelector("#img");
-
-    button.setAttribute("style", "transform: scale(2);\nmargin-top: 30px;");
+    let text = document.querySelector("#text");
+    let button = document.querySelector("#btn-try-again");
+    let img = document.querySelector("#img");
     
     img.style.display = "none";
 
@@ -43,13 +38,10 @@ function main() {
         button.style.display = "none";
         message = "Presensi hari ini sudah selesai!! (⁠ ⁠╹⁠▽⁠╹⁠ ⁠)⁠✧";
     }else {
-        button.style.display = "block";
         message = "Presensi gagal desu (⁠-_-⁠メ⁠)";
         img.style.display = "none";
     }
 
+    $("#text").text(message);
     text.style.fontSize = "100px;";
-    text.innerHTML = message;
-}
-
-main();
+});

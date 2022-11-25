@@ -2,10 +2,14 @@ from termcolor import colored
 from datetime import date, datetime
 from dotenv import load_dotenv
 from flask import request, redirect, url_for, abort, Response
-
-import sys, os, json, numpy as np
+from PIL import Image
+import sys
+import os
+import json
 import cv2
 import face_recognition
+import urllib
+import numpy as np
 
 from pathlib import Path
 sys.path.insert(0, str(Path(f"{os.getcwd()}\\app")).replace("\\", "/"))
@@ -15,6 +19,7 @@ class Controller:
     null_datetime = "0000-00-00 00:00:00"
     def __init__(self): 
         self.app = Firebase()
+        self.currentdir  = os.getcwd()
     
     def datetime(self): 
         return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -93,7 +98,7 @@ class Controller:
         records = [each for each in snap if self.null_datetime not in each.get("time_out") and today in each.get("time_in")]
         
         return len(records) > 0
-        
+    
     def gen_frames(self, session, target=None):
         person = self.app.select_from("users", [
             ["id", target["id"]]
@@ -182,4 +187,52 @@ class Controller:
     
     def tempSessionClear(self):
         open("tempSession.json", "w").truncate(0)
+    
+    def __truncate_files_in_temp(self):
+        mydir = "./temp"
+        filelist = [ files for files in os.listdir(mydir) if files.endswith(".jpg") ]
+        for f in filelist:
+            os.remove(os.path.join(mydir, f))
+    
+    def __download_dataURL(self, expected, data_url):
+        name = "".join(expected.split(" "))
+        on_date = datetime.now().strftime("%Y%m%d%H%M%S")
+        self.filename = f"{self.currentdir}/temp/{name}{on_date}.jpg"
+        self.filename = self.filename.replace("/", "\\")
+        urllib.request.urlretrieve(data_url, filename=self.filename)
         
+    def predict(self, expected, data_url=None):
+        if data_url != None:
+            self.__download_dataURL(expected=expected, data_url=data_url)
+        
+        with open("yamori.json") as jsonfile:
+            image_face_encodings = json.load(jsonfile)
+        
+        predict_image = face_recognition.load_image_file(self.filename)
+        
+        expected_face_encoding = image_face_encodings[expected]
+        
+        # Convert it from type list to type ndarray, same as face_recognition.face_encodings(expected)[0]
+        expected_face_encoding = [np.array(expected_face_encoding)]
+        
+        face_locations = face_recognition.face_locations(predict_image)
+
+        print("Founded {} face(s).".format(len(face_locations)))
+        face_encodings = face_recognition.face_encodings(predict_image, face_locations)
+        
+        face_names = []
+        for face_encoding in face_encodings:
+            matches = face_recognition.compare_faces(expected_face_encoding, face_encoding)
+            name = "Unknown"
+
+            face_distances = face_recognition.face_distance(expected_face_encoding, face_encoding)
+            best_match_index = np.argmin(face_distances)
+            
+            if matches[best_match_index]:
+                name = expected
+
+            face_names.append(name)
+            
+        self.__truncate_files_in_temp()
+        
+        return expected in face_names
