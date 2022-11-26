@@ -48,7 +48,8 @@ class Controller:
                 ])[0]
                 
                 self.app.update(presence.id(), {
-                    "time_out": self.datetime()
+                    "time_out": self.datetime(),
+                    "status": 2
                 })
                 
                 print("2")
@@ -61,7 +62,7 @@ class Controller:
                 "time_in": self.datetime(),
                 "time_out": self.null_datetime,
                 "reason": "",
-                "status": ""
+                "status": 1
             })
             print("1")
             return 1
