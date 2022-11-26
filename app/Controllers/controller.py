@@ -37,7 +37,7 @@ class Controller:
                 message = colored("^ This person had already made a presence today", "red")
                 print(message)
                 
-                return 0
+                return 2
             else:
                 today = self.datetime().split(" ")[0]
             
@@ -72,7 +72,7 @@ class Controller:
         else: 
             message = colored("^ This person had already made a presence today", "red")
             print(message)
-            return 0
+            return None
             
     def has_time_in(self, target):
         today = self.datetime().split(" ")[0]

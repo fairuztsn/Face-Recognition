@@ -66,9 +66,10 @@ function ready() {
                 res = res.responseText;
                 res = JSON.parse(res);
 
-                let nextURL = getCurrentURL().replace("index", `after?s=${res.val_as_expected}`);
+                const val_as_expected = res.val_as_expected;
+
+                let nextURL = getCurrentURL().replace("index", `after?s=${val_as_expected}`);
                 window.location.replace(nextURL);
-            
             }
         });
     }
@@ -114,7 +115,7 @@ function ready() {
             alert(err);
         }
 
-        const seconds = 3;
+        const seconds = 1;
         console.log(`wait ${seconds}s`);
         await delay(seconds*1000);
         document.getElementById("btnScreenshot").click();
