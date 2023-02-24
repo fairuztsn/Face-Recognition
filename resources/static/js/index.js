@@ -1,7 +1,11 @@
 function ready() {
-    if (
-        !"mediaDevices" in navigator ||
-        !"getUserMedia" in navigator.mediaDevices
+    // if (
+    //     !"mediaDevices" in navigator ||
+    //     !"getUserMedia" in navigator.mediaDevices
+    // )
+    if(
+        !navigator.includes("mediaDevices") ||
+        !navigator.mediaDevices.includes("getUserMedia")
     ) {
         alert("Camera API is not available in your browser");
         return;
