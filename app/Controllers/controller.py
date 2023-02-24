@@ -206,7 +206,7 @@ class Controller:
         if data_url != None:
             self.__download_dataURL(expected=expected, data_url=data_url)
         
-        with open("yamori.json") as jsonfile:
+        with open("../../yamori.json") as jsonfile:
             image_face_encodings = json.load(jsonfile)
         
         predict_image = face_recognition.load_image_file(self.filename)
