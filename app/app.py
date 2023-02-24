@@ -51,6 +51,12 @@ def index():
 
     return redirect(url_for('login'))
 
+@app.route("/test")
+def test():
+    snap = controller.app.select_from("users", [
+        ["id", 2021118576]
+    ])[0]
+    return render_template("blank.html", snap=[snap])
 @app.route('/video_feed')
 def video_feed():
     def userOnId(id):

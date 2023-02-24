@@ -93,8 +93,3 @@ class Firebase:
     def hash(self, string):
         return sha256(string.encode('utf-8')).hexdigest()
     
-# firebase = Firebase()
-# firebase.ref = firebase.reference("users")
-# firebase.update("users", {
-#     "password": firebase.hash("12345678")
-# })

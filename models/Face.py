@@ -58,6 +58,8 @@ class Face:
         def __intersection__(self):
             JSON = self.load().keys()
             DIR = os.listdir("images/")
+            if(".gitignore" in DIR):
+                DIR.remove(".gitignore")
             DIR = [os.path.splitext(string)[0] for string in DIR]
             
             changes = []
