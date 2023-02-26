@@ -190,7 +190,7 @@ class Controller:
         open("tempSession.json", "w").truncate(0)
     
     def __truncate_files_in_temp(self):
-        mydir = "./temp"
+        mydir = "../temp"
         filelist = [ files for files in os.listdir(mydir) if files.endswith(".jpg") ]
         for f in filelist:
             os.remove(os.path.join(mydir, f))
@@ -198,16 +198,18 @@ class Controller:
     def __download_dataURL(self, expected, data_url):
         name = "".join(expected.split(" "))
         on_date = datetime.now().strftime("%Y%m%d%H%M%S")
-        self.filename = f"{self.currentdir}/temp/{name}{on_date}.jpg"
+        self.filename = f"{self.currentdir}/../temp/{name}{on_date}.jpg"
         self.filename = self.filename.replace("/", "\\")
         urllib.request.urlretrieve(data_url, filename=self.filename)
         
     def predict(self, expected, data_url=None):
+        yamori = f"{self.currentdir}\..\yamori.json".replace("\\", "/")
+        
         if data_url != None:
             self.__download_dataURL(expected=expected, data_url=data_url)
         
-        with open("yamori.json") as jsonfile:
-            image_face_encodings = json.load(jsonfile)
+        with open(yamori) as encodings:
+            image_face_encodings = json.load(encodings)
         
         predict_image = face_recognition.load_image_file(self.filename)
         
